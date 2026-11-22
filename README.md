@@ -45,3 +45,13 @@ The Downloads section also shows a Card, an Icon Button, and Primary, Secondary,
 Open `Assets/Demos/Shop/ShopPreview.unity` in Play Mode to browse 30 supply cards. Use the mouse wheel, drag the list, or move the scrollbar. The grid uses three columns at the wide size and one at the narrow size. Switch between **Light** and **Dark** while scrolled to see the cards change theme in place.
 
 Edit the catalog in the scene's **Shop Preview** component. The demo creates each Card prefab directly under the `ScrollRect` content Grid in catalog order.
+
+## Screen lifecycle demo
+
+Open `Assets/Demos/ScreenLifecycle/ScreenLifecycle.unity` in Play Mode. Enable **Keep notes** and add a card, then use **Hide** and **Show** to bring back the same window with both changes. Switch to **Dark** while the window is hidden to see it adopt the current theme on Show. **Replace** opens the Review notes window. **Close** followed by **Open** starts Field notes with its original toggle value and one card. The callback log displays the four most recent callbacks.
+
+Add **Flow Screen** to a Canvas, assign an active child RectTransform as its **Window Host**, and optionally assign a **Startup Window** prefab. Put **Window** on the root of an editable UI prefab. Derive child controllers from `ScreenComponent` and use their serialized layout references to add and remove direct children. Put the controllers on stable GameObjects inside the window so themed visuals can be replaced independently.
+
+`OnOpen` runs while the instance is inactive and can initialize views from serialized references. `OnShow` runs after activation, `OnHide` before deactivation, and `OnClose` during close or replacement. Use `ThemeScope.TryApplyCurrentTheme` on a newly added visual subtree when a controller adds views after the window opens. Controllers that cache a replaceable visual can follow `ThemeScope.ViewReplaced`.
+
+From code, call `screen.TryOpen(prefab, out var window, out var error)`, `screen.TryHide()`, `screen.TryShow()`, and `screen.TryClose()`. Use `screen.CurrentWindow` to access the mounted window even while hidden.
