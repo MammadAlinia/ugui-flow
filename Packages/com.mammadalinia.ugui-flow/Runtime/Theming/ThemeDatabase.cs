@@ -8,26 +8,23 @@ namespace UguiFlow
     [CreateAssetMenu(menuName = "uGUI Flow/Theme Database")]
     public sealed class ThemeDatabase : ScriptableObject
     {
-        [Serializable]
-        private struct Entry
-        {
-            public string role;
-            public ThemeView prefab;
-        }
-
         [SerializeField] private TMP_FontAsset defaultFont;
-        [SerializeField] private Entry[] entries = Array.Empty<Entry>();
+        [SerializeField] private ThemeView[] prefabs = Array.Empty<ThemeView>();
 
         public TMP_FontAsset DefaultFont => defaultFont;
 
-        public bool TryGetPrefab(string role, out ThemeView prefab)
+        public bool TryGetPrefab(ThemeView view, out ThemeView prefab)
         {
-            foreach (Entry entry in entries)
+            ThemeViewKey key = view != null ? view.Key : null;
+            if (key != null)
             {
-                if (entry.role == role)
+                foreach (ThemeView candidate in prefabs)
                 {
-                    prefab = entry.prefab;
-                    return prefab != null;
+                    if (candidate != null && candidate.Key == key)
+                    {
+                        prefab = candidate;
+                        return true;
+                    }
                 }
             }
 
@@ -37,18 +34,18 @@ namespace UguiFlow
 
         internal bool Validate(out string error)
         {
-            var roles = new HashSet<string>(StringComparer.Ordinal);
-            foreach (Entry entry in entries)
+            var keys = new HashSet<ThemeViewKey>();
+            foreach (ThemeView prefab in prefabs)
             {
-                if (string.IsNullOrWhiteSpace(entry.role) || !roles.Add(entry.role))
+                if (prefab == null || prefab.transform.parent != null || prefab.Key == null)
                 {
-                    error = $"Theme '{name}' has an empty or duplicate role '{entry.role}'.";
+                    error = $"Theme '{name}' needs a root Theme View prefab with a key in each prefab entry.";
                     return false;
                 }
 
-                if (entry.prefab == null || entry.prefab.Role != entry.role || entry.prefab.transform.parent != null)
+                if (!keys.Add(prefab.Key))
                 {
-                    error = $"Theme '{name}' needs a root prefab with role '{entry.role}'.";
+                    error = $"Theme '{name}' has multiple prefabs for key '{prefab.Key.name}'.";
                     return false;
                 }
             }

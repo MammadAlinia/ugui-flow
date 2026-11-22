@@ -13,9 +13,9 @@ PrefabInstance:
       value: preview-button
       objectReference: {fileID: 0}
     - target: {fileID: 5087036206820563079, guid: 08c45a777d0dc114e8356238d03c7a43, type: 3}
-      propertyPath: role
-      value: preview-button
-      objectReference: {fileID: 0}
+      propertyPath: key
+      value:
+      objectReference: {fileID: 11400000, guid: 5489c04266024876bc3d1d5162cb9398, type: 2}
     - target: {fileID: 6799264815898006245, guid: 08c45a777d0dc114e8356238d03c7a43, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

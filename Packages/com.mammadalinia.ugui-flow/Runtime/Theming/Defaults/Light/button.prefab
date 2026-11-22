@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2615ad83a164e4984e78233338d619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  role: button
+  key: {fileID: 11400000, guid: 8fbc0dbf1a054c859ceab05cd3d160fc, type: 2}
   contentLabel: {fileID: 6272595645709824062}
   preserveTextFormatting: 0
 --- !u!222 &1215180394068121038

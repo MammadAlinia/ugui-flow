@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2615ad83a164e4984e78233338d619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  role: slider
+  key: {fileID: 11400000, guid: 7ee7ae421d9c4252a2b0e448f03a5589, type: 2}
   contentLabel: {fileID: 8926546210523867065}
   preserveTextFormatting: 0
 --- !u!222 &3149667607353768904

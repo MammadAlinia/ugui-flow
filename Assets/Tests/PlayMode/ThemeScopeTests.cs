@@ -96,6 +96,25 @@ namespace UguiFlow.Tests
         }
 
         [Test]
+        public void DatabaseLooksUpTheViewKeyAcrossButtonVariants()
+        {
+            ThemeDatabase light = scope.CurrentTheme;
+            ThemeView selector = View("Light");
+            ThemeView reset = View("Reset settings");
+            Assert.That(light.TryGetPrefab(selector, out ThemeView lightSelector), Is.True);
+            Assert.That(light.TryGetPrefab(reset, out ThemeView lightReset), Is.True);
+            Assert.That(lightSelector.Key, Is.Not.EqualTo(lightReset.Key));
+
+            Click("Dark");
+            ThemeDatabase dark = scope.CurrentTheme;
+            Assert.That(dark.TryGetPrefab(lightSelector, out ThemeView darkSelector), Is.True);
+            Assert.That(dark.TryGetPrefab(lightReset, out ThemeView darkReset), Is.True);
+            Assert.That(darkSelector.Key, Is.EqualTo(lightSelector.Key));
+            Assert.That(darkReset.Key, Is.EqualTo(lightReset.Key));
+            Assert.That(darkReset, Is.Not.EqualTo(lightReset));
+        }
+
+        [Test]
         public void IncompleteThemeLeavesCurrentViewsInPlace()
         {
             ThemeDatabase initial = scope.CurrentTheme;

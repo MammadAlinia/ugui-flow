@@ -9,9 +9,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 22738280952059345, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
-      propertyPath: role
-      value: preview-button
-      objectReference: {fileID: 0}
+      propertyPath: key
+      value:
+      objectReference: {fileID: 11400000, guid: 5489c04266024876bc3d1d5162cb9398, type: 2}
     - target: {fileID: 1770995961780101043, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

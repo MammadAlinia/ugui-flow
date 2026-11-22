@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2615ad83a164e4984e78233338d619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  role: toggle
+  key: {fileID: 11400000, guid: 937ff891f6fe43ccabce28aa7a973b32, type: 2}
   contentLabel: {fileID: 713763239529252477}
   preserveTextFormatting: 0
 --- !u!222 &4260459985584895165

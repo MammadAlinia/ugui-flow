@@ -55,10 +55,11 @@ namespace UguiFlow
                     continue;
 
                 if (view.transform == transform || view.transform.parent.GetComponentInParent<ThemeView>(true) != null ||
-                    !theme.TryGetPrefab(view.Role, out ThemeView prefab) || !view.CanReplaceWith(prefab) ||
+                    !theme.TryGetPrefab(view, out ThemeView prefab) || !view.CanReplaceWith(prefab) ||
                     prefab.GetComponentsInChildren<ThemeView>(true).Length != 1)
                 {
-                    error = $"Theme '{theme.name}' needs a compatible prefab for leaf view '{view.name}' (role '{view.Role}').";
+                    string keyName = view.Key != null ? view.Key.name : "unassigned";
+                    error = $"Theme '{theme.name}' needs a compatible prefab for leaf view '{view.name}' (key '{keyName}').";
                     return false;
                 }
 

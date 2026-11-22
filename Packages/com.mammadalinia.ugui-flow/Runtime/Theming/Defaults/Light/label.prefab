@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2615ad83a164e4984e78233338d619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  role: label
+  key: {fileID: 11400000, guid: a020c81321204be5aecb186720a8e6b1, type: 2}
   contentLabel: {fileID: 6320125074656935885}
   preserveTextFormatting: 0
 --- !u!222 &2034267912673299579

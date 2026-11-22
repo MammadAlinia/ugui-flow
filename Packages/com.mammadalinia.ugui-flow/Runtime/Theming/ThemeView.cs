@@ -9,11 +9,11 @@ namespace UguiFlow
     [AddComponentMenu("uGUI Flow/Theme View")]
     public sealed class ThemeView : MonoBehaviour
     {
-        [SerializeField] private string role;
+        [SerializeField] private ThemeViewKey key;
         [SerializeField] private TMP_Text contentLabel;
         [SerializeField] private bool preserveTextFormatting;
 
-        public string Role => role;
+        public ThemeViewKey Key => key;
         public TMP_Text ContentLabel => contentLabel;
 
         internal ThemeView SourcePrefab { get; private set; }

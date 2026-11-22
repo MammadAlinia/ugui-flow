@@ -13,16 +13,10 @@ MonoBehaviour:
   m_Name: Font Override
   m_EditorClassIdentifier: 
   defaultFont: {fileID: 11400000, guid: 251c7900f6db6634db851f76eacd58f6, type: 2}
-  entries:
-  - role: panel
-    prefab: {fileID: 4337604828031125131, guid: f483389cee53b1e47add490810424db3, type: 3}
-  - role: label
-    prefab: {fileID: 6034699780504769100, guid: 8aed506734f598448baeb77e65cdc87b, type: 3}
-  - role: button
-    prefab: {fileID: 22738280952059345, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
-  - role: toggle
-    prefab: {fileID: 4875512614146578538, guid: f77a789830d6d6a419d22600ea95d7ea, type: 3}
-  - role: slider
-    prefab: {fileID: 6278516468453961958, guid: baa0ebc9b329feb40a22affc6fbae299, type: 3}
-  - role: preview-button
-    prefab: {fileID: 3416927632128022672, guid: a552cc84b8a88b24faa53af6b96b0168, type: 3}
+  prefabs:
+  - {fileID: 4337604828031125131, guid: f483389cee53b1e47add490810424db3, type: 3}
+  - {fileID: 6034699780504769100, guid: 8aed506734f598448baeb77e65cdc87b, type: 3}
+  - {fileID: 22738280952059345, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
+  - {fileID: 4875512614146578538, guid: f77a789830d6d6a419d22600ea95d7ea, type: 3}
+  - {fileID: 6278516468453961958, guid: baa0ebc9b329feb40a22affc6fbae299, type: 3}
+  - {fileID: 3416927632128022672, guid: a552cc84b8a88b24faa53af6b96b0168, type: 3}
