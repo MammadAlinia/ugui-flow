@@ -28,7 +28,7 @@ Run `ResponsiveLayoutTests` in the Test Runner's **PlayMode** tab to verify that
 
 ## Themes
 
-Open `Assets/Demos/Themes/ThemePreview.unity` in Play Mode. Change Music or Volume, then switch among **Light**, **Dark**, **Custom button**, and **Alternate font**. The custom option restyles Reset settings. The alternate option changes the font across the demo.
+Open `Assets/Demos/Themes/ThemePreview.unity` in Play Mode. Change Music or Volume, then switch among **Light**, **Dark**, **Custom button**, and **Alternate font**. The custom option restyles Reset settings. The alternate option changes the font across the demo. The downloads section shows a themed badge, divider, and read-only progress bar. Set the progress prefab's `Slider.value` from code to update it.
 
 The package includes Light and Dark theme databases under `Runtime/Theming/Defaults`. In a Unity project that has yet to use TMP, import **Window > TextMeshPro > Import TMP Essential Resources** for the default Liberation Sans font and shaders. Add a `ThemeScope` to a Canvas or layout root and assign a database under **Initial Theme**. Put the themed control prefabs directly under layout groups.
 

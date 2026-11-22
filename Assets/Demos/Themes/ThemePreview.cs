@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ namespace UguiFlow.Samples
         [SerializeField] private ThemeDatabase dark;
         [SerializeField] private ThemeDatabase customButton;
         [SerializeField] private ThemeDatabase alternateFont;
+        [SerializeField] private ThemeViewKey volumeKey;
 
         public void ShowLight() => Apply(light);
         public void ShowDark() => Apply(dark);
@@ -19,7 +21,8 @@ namespace UguiFlow.Samples
         public void ResetSettings()
         {
             scope.GetComponentInChildren<Toggle>().isOn = true;
-            scope.GetComponentInChildren<Slider>().value = .65f;
+            ThemeView volume = scope.GetComponentsInChildren<ThemeView>().First(view => view.Key == volumeKey);
+            volume.GetComponent<Slider>().value = .65f;
         }
 
         private void Apply(ThemeDatabase theme)

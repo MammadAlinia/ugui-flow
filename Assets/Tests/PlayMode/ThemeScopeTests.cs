@@ -159,6 +159,30 @@ namespace UguiFlow.Tests
             }
         }
 
+        [Test]
+        public void AdditionalViewsSwitchThemesAndKeepProgressReadOnly()
+        {
+            ThemeView badge = View("Download status");
+            badge.ContentLabel.text = "Paused";
+            var progress = View("Asset download").GetComponent<Slider>();
+            progress.SetValueWithoutNotify(.37f);
+            View("Volume").GetComponent<Slider>().SetValueWithoutNotify(.2f);
+            var separatorColor = View("Downloads divider").GetComponent<Image>().color;
+
+            Click("Dark");
+
+            Assert.That(View("Downloads").ContentLabel.text, Is.EqualTo("Downloads"));
+            Assert.That(View("Download status").ContentLabel.text, Is.EqualTo("Paused"));
+            Assert.That(View("Downloads divider").GetComponent<Image>().color, Is.Not.EqualTo(separatorColor));
+            var themedProgress = View("Asset download").GetComponent<Slider>();
+            Assert.That(themedProgress.interactable, Is.False);
+            Assert.That(themedProgress.value, Is.EqualTo(.37f).Within(.001f));
+
+            Click("Reset settings");
+            Assert.That(View("Volume").GetComponent<Slider>().value, Is.EqualTo(.65f).Within(.001f));
+            Assert.That(themedProgress.value, Is.EqualTo(.37f).Within(.001f));
+        }
+
         private ScrollRect AddScrollableProbe()
         {
             var host = new GameObject("Scroll position probe", typeof(RectTransform), typeof(ScrollRect));
