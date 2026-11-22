@@ -1,5 +1,5 @@
 {
   "name": "UguiFlow.Runtime",
   "rootNamespace": "UguiFlow",
-  "references": ["UnityEngine.UI"]
+  "references": ["UnityEngine.UI", "Unity.TextMeshPro"]
 }
