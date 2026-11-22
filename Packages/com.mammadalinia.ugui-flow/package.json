@@ -1,0 +1,11 @@
+{
+  "name": "com.mammadalinia.ugui-flow",
+  "version": "0.1.0-preview.1",
+  "displayName": "uGUI Flow",
+  "description": "Responsive layouts, themes, and screen management for Unity UI.",
+  "unity": "6000.0",
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.ugui": "2.0.0"
+  }
+}
