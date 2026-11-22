@@ -69,7 +69,11 @@ namespace UguiFlow.Tests
         [Test]
         public void GridReflowsAtTheBreakpointWithoutReplacingViews()
         {
-            RectTransform gridRect = CreateRect("Grid", root);
+            RectTransform container = CreateRect("Container", root);
+            var containerLayout = container.gameObject.AddComponent<VerticalLayoutGroup>();
+            containerLayout.childControlWidth = true;
+            containerLayout.childForceExpandWidth = true;
+            RectTransform gridRect = CreateRect("Grid", container);
             var grid = gridRect.gameObject.AddComponent<GridLayoutGroup>();
             grid.padding = new RectOffset(12, 12, 8, 8);
             grid.spacing = new Vector2(16, 10);
@@ -84,20 +88,25 @@ namespace UguiFlow.Tests
             RectTransform firstView = firstSlot.View;
             RectTransform secondView = secondSlot.View;
 
-            gridRect.sizeDelta = new Vector2(640, 250);
+            container.sizeDelta = new Vector2(760, 250);
+            Canvas.ForceUpdateCanvases();
+            Assert.That(grid.constraintCount, Is.EqualTo(2));
+            Assert.That(firstView.rect.width, Is.EqualTo(360).Within(0.01));
+
+            container.sizeDelta = new Vector2(640, 250);
             Canvas.ForceUpdateCanvases();
             Assert.That(grid.constraintCount, Is.EqualTo(2));
             Assert.That(firstView.rect.width, Is.EqualTo(300).Within(0.01));
             Assert.That(firstView.position.y, Is.EqualTo(secondView.position.y).Within(0.01));
 
-            gridRect.sizeDelta = new Vector2(639, 250);
+            container.sizeDelta = new Vector2(639, 250);
             Canvas.ForceUpdateCanvases();
             Assert.That(grid.constraintCount, Is.EqualTo(1));
             Assert.That(firstView.rect.width, Is.EqualTo(615).Within(0.01));
             Assert.That(firstView.position.x, Is.EqualTo(secondView.position.x).Within(0.01));
             Assert.That(firstView.position.y, Is.GreaterThan(secondView.position.y));
 
-            gridRect.sizeDelta = new Vector2(760, 250);
+            container.sizeDelta = new Vector2(760, 250);
             Canvas.ForceUpdateCanvases();
             Assert.That(grid.constraintCount, Is.EqualTo(2));
             Assert.That(firstSlot.View, Is.SameAs(firstView));

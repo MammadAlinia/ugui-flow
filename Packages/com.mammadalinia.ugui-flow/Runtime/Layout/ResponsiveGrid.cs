@@ -8,7 +8,7 @@ namespace UguiFlow
     [DisallowMultipleComponent]
     [RequireComponent(typeof(GridLayoutGroup))]
     [AddComponentMenu("uGUI Flow/Responsive Grid")]
-    public sealed class ResponsiveGrid : UIBehaviour, ILayoutSelfController
+    public sealed class ResponsiveGrid : UIBehaviour, ILayoutSelfController, ILayoutElement
     {
         [SerializeField, Min(0)] private float wideBreakpoint = 640;
         [SerializeField, Min(1)] private int wideColumns = 2;
@@ -46,5 +46,17 @@ namespace UguiFlow
         }
 
         void ILayoutController.SetLayoutVertical() { }
+
+        // The parent supplies the width. Keep the grid's current cell widths
+        // from becoming a minimum width that prevents the grid from shrinking.
+        float ILayoutElement.minWidth => 0;
+        float ILayoutElement.preferredWidth => 0;
+        float ILayoutElement.flexibleWidth => -1;
+        float ILayoutElement.minHeight => -1;
+        float ILayoutElement.preferredHeight => -1;
+        float ILayoutElement.flexibleHeight => -1;
+        int ILayoutElement.layoutPriority => 1;
+        void ILayoutElement.CalculateLayoutInputHorizontal() { }
+        void ILayoutElement.CalculateLayoutInputVertical() { }
     }
 }
