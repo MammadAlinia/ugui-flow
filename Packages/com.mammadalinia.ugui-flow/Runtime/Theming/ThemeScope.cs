@@ -25,19 +25,46 @@ namespace UguiFlow
 
         public bool TrySetTheme(ThemeDatabase theme, out string error)
         {
-            if (theme == null || applying || !Application.IsPlaying(gameObject))
+            if (theme == null)
             {
-                error = "Set a valid theme during Play Mode and wait for the current theme change to finish.";
+                error = "Select a theme database.";
                 return false;
             }
 
-            if (!theme.Validate(out error) || !TryGetReplacements(theme, out var replacements, out error))
+            return TryApply(theme, transform, true, out error);
+        }
+
+        /// <summary>Applies this scope's theme to newly mounted UI without refreshing its siblings.</summary>
+        public bool TryApplyCurrentTheme(RectTransform root, out string error)
+        {
+            if (root == null || root.GetComponentInParent<ThemeScope>(true) != this)
+            {
+                error = "The UI root must belong to this Theme Scope.";
+                return false;
+            }
+
+            return TryApply(CurrentTheme != null ? CurrentTheme : initialTheme, root, false, out error);
+        }
+
+        private bool TryApply(ThemeDatabase theme, Transform root, bool setCurrentTheme, out string error)
+        {
+            if (applying || !Application.IsPlaying(gameObject))
+            {
+                error = "Apply themes during Play Mode and wait for the current theme change to finish.";
+                return false;
+            }
+
+            error = null;
+            if (theme == null)
+                return true;
+
+            if (!theme.Validate(out error) || !TryGetReplacements(theme, root, out var replacements, out error))
                 return false;
 
             applying = true;
             try
             {
-                Apply(theme, replacements);
+                Apply(theme, root, setCurrentTheme, replacements);
                 return true;
             }
             finally
@@ -46,10 +73,11 @@ namespace UguiFlow
             }
         }
 
-        private bool TryGetReplacements(ThemeDatabase theme, out List<(ThemeView view, ThemeView prefab)> replacements, out string error)
+        private bool TryGetReplacements(ThemeDatabase theme, Transform root,
+            out List<(ThemeView view, ThemeView prefab)> replacements, out string error)
         {
             replacements = new List<(ThemeView, ThemeView)>();
-            foreach (ThemeView view in GetComponentsInChildren<ThemeView>(true))
+            foreach (ThemeView view in root.GetComponentsInChildren<ThemeView>(true))
             {
                 if (view.GetComponentInParent<ThemeScope>(true) != this)
                     continue;
@@ -70,11 +98,12 @@ namespace UguiFlow
             return true;
         }
 
-        private void Apply(ThemeDatabase theme, List<(ThemeView view, ThemeView prefab)> replacements)
+        private void Apply(ThemeDatabase theme, Transform root, bool setCurrentTheme,
+            List<(ThemeView view, ThemeView prefab)> replacements)
         {
             Canvas.ForceUpdateCanvases();
             var scrollPositions = new List<(ScrollRect scroll, Vector2 position)>();
-            foreach (ScrollRect scroll in GetComponentsInChildren<ScrollRect>(true))
+            foreach (ScrollRect scroll in root.GetComponentsInChildren<ScrollRect>(true))
             {
                 if (scroll.isActiveAndEnabled && scroll.content != null && scroll.GetComponentInParent<ThemeScope>(true) == this)
                     scrollPositions.Add((scroll, scroll.normalizedPosition));
@@ -104,7 +133,8 @@ namespace UguiFlow
                 swapped.Add((view, next));
             }
 
-            CurrentTheme = theme;
+            if (setCurrentTheme)
+                CurrentTheme = theme;
             Canvas.ForceUpdateCanvases();
             foreach ((ScrollRect scroll, Vector2 position) in scrollPositions)
             {
