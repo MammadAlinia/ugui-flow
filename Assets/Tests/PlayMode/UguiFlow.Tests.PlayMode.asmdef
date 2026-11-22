@@ -1,0 +1,6 @@
+{
+  "name": "UguiFlow.Tests.PlayMode",
+  "rootNamespace": "UguiFlow.Tests",
+  "references": ["UguiFlow.Runtime", "UnityEngine.UI"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

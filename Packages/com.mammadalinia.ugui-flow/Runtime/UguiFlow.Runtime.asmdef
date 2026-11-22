@@ -1,0 +1,5 @@
+{
+  "name": "UguiFlow.Runtime",
+  "rootNamespace": "UguiFlow",
+  "references": ["UnityEngine.UI"]
+}
