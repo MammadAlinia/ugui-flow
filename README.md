@@ -39,3 +39,9 @@ Call `ThemeScope.TrySetTheme(theme, out error)` in Play Mode. The scope preserve
 The theme preview reserves its heading and description heights with `LayoutElement`. Set heights this way when controls should stay in place across font changes, and leave enough room for the tallest font and wrapped text at the narrowest supported width.
 
 The Downloads section also shows a Card, an Icon Button, and Primary, Secondary, and Tertiary buttons. Edit a Card's title and body through its `ThemeView` content labels. Set an Icon Button's sprite on its content image. The theme scope carries those values across a prefab swap.
+
+## Scrollable shop demo
+
+Open `Assets/Demos/Shop/ShopPreview.unity` in Play Mode to browse 30 supply cards. Use the mouse wheel, drag the list, or move the scrollbar. The grid uses three columns at the wide size and one at the narrow size. Switch between **Light** and **Dark** while scrolled to see the cards change theme in place.
+
+Edit the catalog in the scene's **Shop Preview** component. The demo creates each Card prefab directly under the `ScrollRect` content Grid in catalog order.
