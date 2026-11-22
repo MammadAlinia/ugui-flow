@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c81dc447aa4f5cc4e8451abb33996e5a, type: 3}
+  m_Name: Dark
+  m_EditorClassIdentifier: 
+  defaultFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  entries:
+  - role: panel
+    prefab: {fileID: 4377253471279103100, guid: 27c59bd3c6148c343bb5c9e2f61d3869, type: 3}
+  - role: label
+    prefab: {fileID: 9191627734944880561, guid: e636b9efa1500b94e9cce4eb1a1b5999, type: 3}
+  - role: button
+    prefab: {fileID: 5087036206820563079, guid: 08c45a777d0dc114e8356238d03c7a43, type: 3}
+  - role: toggle
+    prefab: {fileID: 7430883931649763671, guid: 2542418aff4b50d49827c30a18a462f1, type: 3}
+  - role: slider
+    prefab: {fileID: 6669633066157380374, guid: 38bb1430030a94740996eeea4c7736ef, type: 3}
+  - role: preview-button
+    prefab: {fileID: 352899554928107558, guid: b880b269129fb034d9809a5576c76045, type: 3}

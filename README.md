@@ -25,3 +25,13 @@ Place visual prefabs directly under a layout group in display order. Use **Conta
 Add **Responsive Grid** alongside **Grid Layout Group** when the layout should reflow by width. Stretch the grid horizontally or have its parent layout group assign its width. Set the breakpoint and wide column count on **Responsive Grid**, and set the cell height, padding, and spacing on **Grid Layout Group**. For a scrolling layout, use a Column as the `ScrollRect` content and fit its height with a `ContentSizeFitter`.
 
 Run `ResponsiveLayoutTests` in the Test Runner's **PlayMode** tab to verify that the grid reflows its direct children in sibling order.
+
+## Themes
+
+Open `Assets/Demos/Themes/ThemePreview.unity` in Play Mode. Change Music or Volume, then switch among **Light**, **Dark**, **Custom button**, and **Alternate font**. The custom option restyles Reset settings. The alternate option changes the font across the demo.
+
+The package includes Light and Dark theme databases under `Runtime/Theming/Defaults`. In a Unity project that has yet to use TMP, import **Window > TextMeshPro > Import TMP Essential Resources** for the default Liberation Sans font and shaders. Add a `ThemeScope` to a Canvas or layout root and assign a database under **Initial Theme**. Put the themed control prefabs directly under layout groups.
+
+To customize a theme, duplicate its database. Change **Default Font** for a font-only theme, or assign a prefab variant to the role you want to change. Keep the role and root control type on variants. Place a decorative themed panel alongside its layout content so each `ThemeView` owns only its visual and control hierarchy.
+
+Call `ThemeScope.TrySetTheme(theme, out error)` in Play Mode. The scope preserves supported uGUI control values, label content, and external event listeners. Subscribe to `ViewReplaced` if a controller caches component references. Run `ThemeScopeTests` in Play Mode to check the sample's switch behavior.
