@@ -18,7 +18,9 @@ The package code is licensed under MIT. See [LICENSE.md](LICENSE.md).
 
 Open `Assets/Demos/ResponsiveLayout/ResponsiveLayout.unity` and enter Play Mode. Try a 1040 × 780 Game view for two columns and 440 × 804 for one column. At the narrower size, scroll the advanced settings to reach **Restore defaults**.
 
-Drag **Column**, **Row**, or **Grid** from `Packages/com.mammadalinia.ugui-flow/Runtime/Layout/Prefabs` into a Canvas. Place visual prefabs directly under the layout prefab in the Hierarchy, in display order. Use a `LayoutElement` on a visual to control its size in a Row or Column where needed. Grid uses its cell size for each child.
+Drag **Column**, **Row**, or **Grid** from `Packages/com.mammadalinia.ugui-flow/Runtime/Layout/Prefabs` into a Canvas. Each prefab starts with full-stretch anchors. When you nest one under a Row or Column that controls child size, use its `LayoutElement` to set minimum, preferred, or flexible size. Grid assigns its cell size to each direct child.
+
+Place visual prefabs directly under a layout group in display order. Use **Container** when you need a single layout child whose own children are positioned by their RectTransforms. The Container fills a plain parent by default. When you put it inside a Row or Column that controls child size, add a `LayoutElement` to give the Container itself a size.
 
 Add **Responsive Grid** alongside **Grid Layout Group** when the layout should reflow by width. Stretch the grid horizontally or have its parent layout group assign its width. Set the breakpoint and wide column count on **Responsive Grid**, and set the cell height, padding, and spacing on **Grid Layout Group**. For a scrolling layout, use a Column as the `ScrollRect` content and fit its height with a `ContentSizeFitter`.
 

@@ -1,6 +1,7 @@
 {
   "name": "UguiFlow.Tests.EditMode",
   "rootNamespace": "UguiFlow.Tests",
+  "references": ["UnityEngine.UI"],
   "includePlatforms": ["Editor"],
   "optionalUnityReferences": ["TestAssemblies"]
 }
