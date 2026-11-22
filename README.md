@@ -37,3 +37,5 @@ To customize a theme, duplicate its database. Change **Default Font** for a font
 Call `ThemeScope.TrySetTheme(theme, out error)` in Play Mode. The scope preserves supported uGUI control values, label content, and external event listeners. Subscribe to `ViewReplaced` if a controller caches component references. Run `ThemeScopeTests` in Play Mode to check the sample's switch behavior.
 
 The theme preview reserves its heading and description heights with `LayoutElement`. Set heights this way when controls should stay in place across font changes, and leave enough room for the tallest font and wrapped text at the narrowest supported width.
+
+The Downloads section also shows a Card, an Icon Button, and Primary, Secondary, and Tertiary buttons. Edit a Card's title and body through its `ThemeView` content labels. Set an Icon Button's sprite on its content image. The theme scope carries those values across a prefab swap.

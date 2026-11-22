@@ -11,10 +11,14 @@ namespace UguiFlow
     {
         [SerializeField] private ThemeViewKey key;
         [SerializeField] private TMP_Text contentLabel;
+        [SerializeField] private TMP_Text supportingLabel;
+        [SerializeField] private Image contentIcon;
         [SerializeField] private bool preserveTextFormatting;
 
         public ThemeViewKey Key => key;
         public TMP_Text ContentLabel => contentLabel;
+        public TMP_Text SupportingLabel => supportingLabel;
+        public Image ContentIcon => contentIcon;
 
         internal ThemeView SourcePrefab { get; private set; }
         internal RectTransform Rect => (RectTransform)transform;
@@ -24,7 +28,9 @@ namespace UguiFlow
             Selectable control = GetComponent<Selectable>();
             Selectable replacement = prefab.GetComponent<Selectable>();
             return control?.GetType() == replacement?.GetType() &&
-                   (contentLabel == null) == (prefab.contentLabel == null);
+                   (contentLabel == null) == (prefab.contentLabel == null) &&
+                   (supportingLabel == null) == (prefab.supportingLabel == null) &&
+                   (contentIcon == null) == (prefab.contentIcon == null);
         }
 
         internal ThemeView ReplaceWith(ThemeView prefab, TMP_FontAsset font)
@@ -96,6 +102,12 @@ namespace UguiFlow
                     next.contentLabel.alignment = contentLabel.alignment;
                 }
             }
+
+            if (supportingLabel != null)
+                next.supportingLabel.text = supportingLabel.text;
+
+            if (contentIcon != null)
+                next.contentIcon.sprite = contentIcon.sprite;
 
             if (TryGetComponent(out Selectable oldControl))
                 next.GetComponent<Selectable>().interactable = oldControl.interactable;

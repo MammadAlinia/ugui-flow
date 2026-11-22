@@ -183,6 +183,38 @@ namespace UguiFlow.Tests
             Assert.That(themedProgress.value, Is.EqualTo(.37f).Within(.001f));
         }
 
+        [Test]
+        public void CardsAndActionButtonsKeepTheirContentAndActionsAcrossThemes()
+        {
+            ThemeView card = View("Offline content");
+            card.ContentLabel.text = "Cached content";
+            card.SupportingLabel.text = "Ready for offline use.";
+            var icon = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), new Vector2(.5f, .5f));
+            try
+            {
+                View("Complete download").ContentIcon.sprite = icon;
+                Click("Start download");
+                Assert.That(View("Asset download").GetComponent<Slider>().value, Is.EqualTo(.25f));
+
+                Click("Dark");
+                Assert.That(View("Offline content").ContentLabel.text, Is.EqualTo("Cached content"));
+                Assert.That(View("Offline content").SupportingLabel.text, Is.EqualTo("Ready for offline use."));
+                Assert.That(View("Complete download").ContentIcon.sprite, Is.SameAs(icon));
+
+                Click("Pause download");
+                Assert.That(View("Download status").ContentLabel.text, Is.EqualTo("Paused"));
+                Click("Clear download");
+                Assert.That(View("Asset download").GetComponent<Slider>().value, Is.Zero);
+                Click("Complete download");
+                Assert.That(View("Download status").ContentLabel.text, Is.EqualTo("Complete"));
+                Assert.That(View("Asset download").GetComponent<Slider>().value, Is.EqualTo(1));
+            }
+            finally
+            {
+                Object.DestroyImmediate(icon);
+            }
+        }
+
         private ScrollRect AddScrollableProbe()
         {
             var host = new GameObject("Scroll position probe", typeof(RectTransform), typeof(ScrollRect));
