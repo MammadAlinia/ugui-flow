@@ -35,3 +35,5 @@ The package includes Light and Dark theme databases under `Runtime/Theming/Defau
 To customize a theme, duplicate its database. Change **Default Font** for a font-only theme, or drag a prefab variant into the **Prefabs** list in place of the existing view. The variant inherits its `ThemeViewKey` from the base prefab. Create a separate key under **Create > uGUI Flow > Theme View Key** when two controls of the same type need independent styling. Place a decorative themed panel alongside its layout content so each `ThemeView` owns only its visual and control hierarchy.
 
 Call `ThemeScope.TrySetTheme(theme, out error)` in Play Mode. The scope preserves supported uGUI control values, label content, and external event listeners. Subscribe to `ViewReplaced` if a controller caches component references. Run `ThemeScopeTests` in Play Mode to check the sample's switch behavior.
+
+The theme preview reserves its heading and description heights with `LayoutElement`. Set heights this way when controls should stay in place across font changes, and leave enough room for the tallest font and wrapped text at the narrowest supported width.

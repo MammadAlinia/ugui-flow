@@ -114,6 +114,32 @@ namespace UguiFlow.Tests
             Assert.That(darkReset, Is.Not.EqualTo(lightReset));
         }
 
+        [TestCase(368)]
+        [TestCase(720)]
+        public void FontOnlySwitchKeepsLayoutHeightAndControlPositions(int width)
+        {
+            var frame = (RectTransform)scope.transform.Find("Frame");
+            frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            var page = (RectTransform)frame.Find("Page");
+            Canvas.ForceUpdateCanvases();
+            float initialHeight = page.rect.height;
+            var controls = new[] { View("Light"), View("Music"), View("Volume"), View("Reset settings") };
+            Vector3[] initialPositions = controls.Select(view => view.transform.localPosition).ToArray();
+
+            Click("Alternate font");
+            Canvas.ForceUpdateCanvases();
+
+            Assert.That(page.rect.height, Is.EqualTo(initialHeight).Within(.01f));
+            for (int i = 0; i < controls.Length; i++)
+                Assert.That(Vector3.Distance(controls[i].transform.localPosition, initialPositions[i]), Is.LessThan(.01f));
+
+            foreach (string name in new[] { "Settings themes", "Switch themes and check that your settings stay in place.", "Audio settings" })
+            {
+                var label = View(name).ContentLabel;
+                Assert.That(label.preferredHeight, Is.LessThanOrEqualTo(label.rectTransform.rect.height + .01f), name);
+            }
+        }
+
         [Test]
         public void IncompleteThemeLeavesCurrentViewsInPlace()
         {
