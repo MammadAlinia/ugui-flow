@@ -67,7 +67,7 @@ namespace UguiFlow.Tests
         }
 
         [Test]
-        public void GridReflowsAtTheBreakpointWithoutReplacingViews()
+        public void GridReflowsDirectChildrenInSiblingOrder()
         {
             RectTransform container = CreateRect("Container", root);
             var containerLayout = container.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -79,14 +79,8 @@ namespace UguiFlow.Tests
             grid.spacing = new Vector2(16, 10);
             grid.cellSize = new Vector2(100, 60);
             gridRect.gameObject.AddComponent<ResponsiveGrid>();
-            RectTransform prefab = CreateRect("Visual", root);
-
-            var firstSlot = CreateRect("First", gridRect).gameObject.AddComponent<LayoutSlot>();
-            var secondSlot = CreateRect("Second", gridRect).gameObject.AddComponent<LayoutSlot>();
-            firstSlot.SetViewPrefab(prefab);
-            secondSlot.SetViewPrefab(prefab);
-            RectTransform firstView = firstSlot.View;
-            RectTransform secondView = secondSlot.View;
+            RectTransform firstView = CreateRect("First Visual", gridRect);
+            RectTransform secondView = CreateRect("Second Visual", gridRect);
 
             container.sizeDelta = new Vector2(760, 250);
             Canvas.ForceUpdateCanvases();
@@ -98,6 +92,7 @@ namespace UguiFlow.Tests
             Assert.That(grid.constraintCount, Is.EqualTo(2));
             Assert.That(firstView.rect.width, Is.EqualTo(300).Within(0.01));
             Assert.That(firstView.position.y, Is.EqualTo(secondView.position.y).Within(0.01));
+            Assert.That(firstView.position.x, Is.LessThan(secondView.position.x));
 
             container.sizeDelta = new Vector2(639, 250);
             Canvas.ForceUpdateCanvases();
@@ -109,8 +104,8 @@ namespace UguiFlow.Tests
             container.sizeDelta = new Vector2(760, 250);
             Canvas.ForceUpdateCanvases();
             Assert.That(grid.constraintCount, Is.EqualTo(2));
-            Assert.That(firstSlot.View, Is.SameAs(firstView));
-            Assert.That(secondSlot.View, Is.SameAs(secondView));
+            Assert.That(gridRect.GetChild(0), Is.SameAs(firstView));
+            Assert.That(gridRect.GetChild(1), Is.SameAs(secondView));
         }
 
         private static RectTransform CreateRect(string name, Transform parent = null)
