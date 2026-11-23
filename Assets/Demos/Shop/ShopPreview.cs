@@ -3,8 +3,7 @@ using UnityEngine;
 
 namespace UguiFlow.Samples
 {
-    [RequireComponent(typeof(ThemeScope))]
-    public sealed class ShopPreview : MonoBehaviour
+    public sealed class ShopPreview : UIComponent
     {
         [Serializable]
         private struct Item
@@ -23,9 +22,9 @@ namespace UguiFlow.Samples
 
         private ThemeScope scope;
 
-        private void Awake()
+        protected override void OnInitialize()
         {
-            scope = GetComponent<ThemeScope>();
+            scope = GetComponentInParent<ThemeScope>(true);
             itemCount.ContentLabel.text = $"{items.Length} items";
             foreach (Item item in items)
             {

@@ -18,22 +18,35 @@ namespace UguiFlow
         protected override void OnEnable()
         {
             base.OnEnable();
-            grid = GetComponent<GridLayoutGroup>();
-            LayoutRebuilder.MarkLayoutForRebuild((RectTransform)transform);
+            if (!TryValidateAndRefresh(out string error))
+                Debug.LogError(error, this);
         }
 
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (isActiveAndEnabled)
-                LayoutRebuilder.MarkLayoutForRebuild((RectTransform)transform);
+            ValidationQueue.Request(this);
         }
 #endif
 
+        internal bool TryValidateAndRefresh(out string error)
+        {
+            if (transform is not RectTransform rect || !TryGetComponent(out grid))
+            {
+                error = $"Responsive Grid '{name}' needs a RectTransform and Grid Layout Group.";
+                return false;
+            }
+
+            if (isActiveAndEnabled)
+                LayoutRebuilder.MarkLayoutForRebuild(rect);
+            error = null;
+            return true;
+        }
+
         void ILayoutController.SetLayoutHorizontal()
         {
-            if (!grid.isActiveAndEnabled)
+            if (grid == null || !grid.isActiveAndEnabled)
                 return;
 
             float width = ((RectTransform)transform).rect.width;

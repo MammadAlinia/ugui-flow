@@ -16,11 +16,39 @@ namespace UguiFlow
         public event Action<ThemeView, ThemeView> ViewReplaced;
 
         private bool applying;
+        private ThemeDatabase EffectiveTheme => CurrentTheme != null ? CurrentTheme : initialTheme;
+
+        internal static ThemeDatabase ResolveForSlot(Transform parent)
+        {
+            ThemeScope scope = parent != null ? parent.GetComponentInParent<ThemeScope>(true) : null;
+            return scope != null ? scope.EffectiveTheme : ThemeDatabase.Default;
+        }
 
         private void Start()
         {
-            if (CurrentTheme == null && initialTheme != null && !TrySetTheme(initialTheme, out string error))
+            if (!TryValidate(out string error) || (CurrentTheme == null && !TrySetTheme(initialTheme, out error)))
                 Debug.LogError(error, this);
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate() => ValidationQueue.Request(this);
+#endif
+
+        internal bool TryValidate(out string error) =>
+            TryValidateTree(initialTheme, transform, false, out error);
+
+        internal bool TryValidateScreen(Transform screen, out string error) =>
+            TryValidateTree(EffectiveTheme, screen, true, out error);
+
+        private bool TryValidateTree(ThemeDatabase theme, Transform root, bool includeUnscoped, out string error)
+        {
+            if (initialTheme == null)
+            {
+                error = $"Theme Scope '{name}' needs an Initial Theme.";
+                return false;
+            }
+
+            return theme.Validate(out error) && TryGetReplacements(theme, root, out _, out error, includeUnscoped);
         }
 
         public bool TrySetTheme(ThemeDatabase theme, out string error)
@@ -43,7 +71,7 @@ namespace UguiFlow
                 return false;
             }
 
-            return TryApply(CurrentTheme != null ? CurrentTheme : initialTheme, root, false, out error);
+            return TryApply(EffectiveTheme, root, false, out error);
         }
 
         private bool TryApply(ThemeDatabase theme, Transform root, bool setCurrentTheme, out string error)
@@ -54,9 +82,11 @@ namespace UguiFlow
                 return false;
             }
 
-            error = null;
-            if (theme == null)
-                return true;
+            if (initialTheme == null)
+            {
+                error = $"Theme Scope '{name}' needs an Initial Theme.";
+                return false;
+            }
 
             if (!theme.Validate(out error) || !TryGetReplacements(theme, root, out var replacements, out error))
                 return false;
@@ -74,17 +104,22 @@ namespace UguiFlow
         }
 
         private bool TryGetReplacements(ThemeDatabase theme, Transform root,
-            out List<(ThemeView view, ThemeView prefab)> replacements, out string error)
+            out List<(ThemeView view, ThemeView prefab)> replacements, out string error, bool includeUnscoped = false)
         {
             replacements = new List<(ThemeView, ThemeView)>();
             foreach (ThemeView view in root.GetComponentsInChildren<ThemeView>(true))
             {
-                if (view.GetComponentInParent<ThemeScope>(true) != this)
+                ThemeScope owner = view.GetComponentInParent<ThemeScope>(true);
+                if (owner != this && !(includeUnscoped && owner == null))
                     continue;
 
-                if (view.transform == transform || view.transform.parent.GetComponentInParent<ThemeView>(true) != null ||
+                if (!view.TryValidate(out error))
+                    return false;
+
+                Transform parent = view.transform.parent;
+                if (view.transform == transform || parent == null || parent.GetComponentInParent<ThemeView>(true) != null ||
                     !theme.TryGetPrefab(view, out ThemeView prefab) || !view.CanReplaceWith(prefab) ||
-                    prefab.GetComponentsInChildren<ThemeView>(true).Length != 1)
+                    view.GetComponentInChildren<UIComponent>(true) != null)
                 {
                     string keyName = view.Key != null ? view.Key.name : "unassigned";
                     error = $"Theme '{theme.name}' needs a compatible prefab for leaf view '{view.name}' (key '{keyName}').";
@@ -145,8 +180,24 @@ namespace UguiFlow
             if (nextSelection != null)
                 events.SetSelectedGameObject(nextSelection);
 
+            var listeners = ViewReplaced?.GetInvocationList();
+            if (listeners == null)
+                return;
+
             foreach ((ThemeView before, ThemeView after) in swapped)
-                ViewReplaced?.Invoke(before, after);
+            {
+                foreach (Action<ThemeView, ThemeView> listener in listeners)
+                {
+                    try
+                    {
+                        listener(before, after);
+                    }
+                    catch (Exception)
+                    {
+                        // Listeners cannot interrupt a committed theme change.
+                    }
+                }
+            }
         }
     }
 }

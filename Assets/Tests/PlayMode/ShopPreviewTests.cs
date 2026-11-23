@@ -29,8 +29,13 @@ namespace UguiFlow.Tests
             yield return null;
             yield return null;
 
-            ThemeScope scope = scene.GetRootGameObjects().Select(root => root.GetComponent<ThemeScope>()).First(x => x != null);
-            ScrollRect scroll = scope.GetComponentInChildren<ScrollRect>();
+            Window window = scene.GetRootGameObjects().Select(root => root.GetComponent<Window>()).Single(x => x != null);
+            UIComponent screen = window.CurrentScreen;
+            Assert.That(screen, Is.Not.Null);
+            Assert.That(screen.IsVisible, Is.True);
+            Assert.That(screen.GetComponentsInChildren<Canvas>(true), Is.Empty);
+            ThemeScope scope = window.GetComponent<ThemeScope>();
+            ScrollRect scroll = screen.GetComponentInChildren<ScrollRect>();
             RectTransform layout = (RectTransform)scroll.transform.parent;
             var grid = scroll.content.GetComponent<GridLayoutGroup>();
             Assert.That(scroll.content.childCount, Is.EqualTo(30));
@@ -44,10 +49,10 @@ namespace UguiFlow.Tests
             layout.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 368);
             Canvas.ForceUpdateCanvases();
             Assert.That(grid.constraintCount, Is.EqualTo(1));
-            var title = scope.GetComponentsInChildren<ThemeView>().First(view => view.name == "Outpost shop").ContentLabel;
+            var title = screen.GetComponentsInChildren<ThemeView>().First(view => view.name == "Outpost shop").ContentLabel;
             Assert.That(title.preferredHeight, Is.LessThanOrEqualTo(title.rectTransform.rect.height));
             scroll.verticalNormalizedPosition = .42f;
-            ThemeView darkButton = scope.GetComponentsInChildren<ThemeView>().First(view => view.name == "Dark");
+            ThemeView darkButton = screen.GetComponentsInChildren<ThemeView>().First(view => view.name == "Dark");
             darkButton.GetComponent<Button>().onClick.Invoke();
             Assert.That(scope.CurrentTheme.name, Is.EqualTo("Dark"));
             Assert.That(scroll.verticalNormalizedPosition, Is.EqualTo(.42f).Within(.01f));

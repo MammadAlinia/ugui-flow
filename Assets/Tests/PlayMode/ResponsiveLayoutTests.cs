@@ -1,4 +1,9 @@
 using System.Collections;
+#if UNITY_EDITOR
+using System.Linq;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
+#endif
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -9,6 +14,9 @@ namespace UguiFlow.Tests
     public sealed class ResponsiveLayoutTests
     {
         private RectTransform root;
+#if UNITY_EDITOR
+        private Scene demoScene;
+#endif
 
         [SetUp]
         public void CreateRoot()
@@ -21,8 +29,44 @@ namespace UguiFlow.Tests
         public IEnumerator DestroyRoot()
         {
             Object.Destroy(root.gameObject);
+#if UNITY_EDITOR
+            if (demoScene.isLoaded)
+                yield return SceneManager.UnloadSceneAsync(demoScene);
+#endif
             yield return null;
         }
+
+#if UNITY_EDITOR
+        [UnityTest]
+        public IEnumerator DemoMountsSettingsAndReflowsTheQuickSettingsGrid()
+        {
+            demoScene = EditorSceneManager.LoadSceneInPlayMode("Assets/Demos/ResponsiveLayout/ResponsiveLayout.unity",
+                new LoadSceneParameters(LoadSceneMode.Additive));
+            yield return null;
+            yield return null;
+
+            Window window = demoScene.GetRootGameObjects().Select(root => root.GetComponent<Window>())
+                .Single(component => component != null);
+            UIComponent screen = window.CurrentScreen;
+            Assert.That(screen, Is.Not.Null);
+            Assert.That(screen.IsVisible, Is.True);
+            Assert.That(screen.GetComponentsInChildren<Canvas>(true), Is.Empty);
+
+            UIComponent quickSettings = screen.Children.Single(component => component.name == "Quick Settings Grid");
+            UIComponent advancedSettings = screen.Children.Single(component => component.name == "Advanced Settings Scroll View");
+            Assert.That(quickSettings.IsVisible && advancedSettings.IsVisible, Is.True);
+
+            GridLayoutGroup grid = quickSettings.GetComponent<GridLayoutGroup>();
+            RectTransform screenRect = (RectTransform)screen.transform;
+            screenRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1040);
+            Canvas.ForceUpdateCanvases();
+            Assert.That(grid.constraintCount, Is.EqualTo(2));
+
+            screenRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 440);
+            Canvas.ForceUpdateCanvases();
+            Assert.That(grid.constraintCount, Is.EqualTo(1));
+        }
+#endif
 
         [Test]
         public void GridReflowsDirectChildrenInSiblingOrder()

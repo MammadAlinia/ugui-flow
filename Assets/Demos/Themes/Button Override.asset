@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Button Override
   m_EditorClassIdentifier: 
   defaultFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  prefabs:
-  - {fileID: 4337604828031125131, guid: f483389cee53b1e47add490810424db3, type: 3}
-  - {fileID: 6034699780504769100, guid: 8aed506734f598448baeb77e65cdc87b, type: 3}
-  - {fileID: 22738280952059345, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
-  - {fileID: 4875512614146578538, guid: f77a789830d6d6a419d22600ea95d7ea, type: 3}
-  - {fileID: 6278516468453961958, guid: baa0ebc9b329feb40a22affc6fbae299, type: 3}
-  - {fileID: 1498338519104802489, guid: cb07ca970e21287459e3ebff4e810f1b, type: 3}
-  - {fileID: 4159945358800616255, guid: 436270aa617bc8e489b2328798a7c5d0, type: 3}
-  - {fileID: 6144284626856653487, guid: 1c553b54930afd14fb36e86d739f8572, type: 3}
-  - {fileID: 8701040466359550161, guid: ad6b0169be89c334890c74821cfb8cef, type: 3}
-  - {fileID: 3260524860044396395, guid: c04e4be9ef8bcc04aa164e0f57bdbd05, type: 3}
-  - {fileID: 3009062704970896071, guid: b88c44964b3ff90489f3db34c1f9d55b, type: 3}
-  - {fileID: 9067516523544957895, guid: 9a2e4ff48a8f09345860c57870da80a4, type: 3}
-  - {fileID: 3181497213025764708, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
-  - {fileID: 6462054468030198742, guid: 4024f7cd7f84ab447a14b341b79ce491, type: 3}
+  panelPrefab: {fileID: 4337604828031125131, guid: f483389cee53b1e47add490810424db3, type: 3}
+  labelPrefab: {fileID: 6034699780504769100, guid: 8aed506734f598448baeb77e65cdc87b, type: 3}
+  buttonPrefab: {fileID: 22738280952059345, guid: afa74469803ab7d4fadde7e07b25b8d5, type: 3}
+  resetButtonPrefab: {fileID: 1498338519104802489, guid: cb07ca970e21287459e3ebff4e810f1b, type: 3}
+  primaryButtonPrefab: {fileID: 9067516523544957895, guid: 9a2e4ff48a8f09345860c57870da80a4, type: 3}
+  secondaryButtonPrefab: {fileID: 3181497213025764708, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
+  tertiaryButtonPrefab: {fileID: 6462054468030198742, guid: 4024f7cd7f84ab447a14b341b79ce491, type: 3}
+  iconButtonPrefab: {fileID: 3009062704970896071, guid: b88c44964b3ff90489f3db34c1f9d55b, type: 3}
+  togglePrefab: {fileID: 4875512614146578538, guid: f77a789830d6d6a419d22600ea95d7ea, type: 3}
+  sliderPrefab: {fileID: 6278516468453961958, guid: baa0ebc9b329feb40a22affc6fbae299, type: 3}
+  badgePrefab: {fileID: 4159945358800616255, guid: 436270aa617bc8e489b2328798a7c5d0, type: 3}
+  dividerPrefab: {fileID: 6144284626856653487, guid: 1c553b54930afd14fb36e86d739f8572, type: 3}
+  progressBarPrefab: {fileID: 8701040466359550161, guid: ad6b0169be89c334890c74821cfb8cef, type: 3}
+  cardPrefab: {fileID: 3260524860044396395, guid: c04e4be9ef8bcc04aa164e0f57bdbd05, type: 3}
+  errorViewPrefab: {fileID: 4337604828031125131, guid: 873743c320dc4181b02f3c005a1e0a27, type: 3}

@@ -20,8 +20,52 @@ namespace UguiFlow
         public TMP_Text SupportingLabel => supportingLabel;
         public Image ContentIcon => contentIcon;
 
-        internal ThemeView SourcePrefab { get; private set; }
+        internal ThemeView SourcePrefab { get; set; }
         internal RectTransform Rect => (RectTransform)transform;
+
+        internal bool TryValidate(out string error)
+        {
+            if (transform is not RectTransform || key == null || key.Kind == ThemeViewKind.Unassigned)
+            {
+                error = $"Theme View '{name}' needs a RectTransform and an assigned Theme View Key.";
+                return false;
+            }
+
+            string requiredPart = key.Kind switch
+            {
+                ThemeViewKind.Label or ThemeViewKind.Badge or ThemeViewKind.ErrorView when contentLabel == null => "Content Label",
+                ThemeViewKind.ErrorView when GetComponentInChildren<Canvas>(true) != null ||
+                    GetComponentInChildren<Selectable>(true) != null || !gameObject.activeSelf => "an active visual without a Canvas or Selectable",
+                ThemeViewKind.Card when contentLabel == null || supportingLabel == null => "Content Label and Supporting Label",
+                ThemeViewKind.IconButton when contentIcon == null => "Content Icon",
+                ThemeViewKind.Button or ThemeViewKind.ResetButton or ThemeViewKind.PrimaryButton or
+                    ThemeViewKind.SecondaryButton or ThemeViewKind.TertiaryButton or ThemeViewKind.IconButton
+                    when !TryGetComponent<Button>(out _) => "Button",
+                ThemeViewKind.Toggle when !TryGetComponent<Toggle>(out _) => "Toggle",
+                ThemeViewKind.Slider or ThemeViewKind.ProgressBar when !TryGetComponent<Slider>(out _) => "Slider",
+                _ => null
+            };
+            if (requiredPart != null)
+            {
+                error = $"Theme View '{name}' needs {requiredPart} for its {key.Kind} key.";
+                return false;
+            }
+
+            if ((contentLabel != null && !contentLabel.transform.IsChildOf(transform)) ||
+                (supportingLabel != null && !supportingLabel.transform.IsChildOf(transform)) ||
+                (contentIcon != null && !contentIcon.transform.IsChildOf(transform)))
+            {
+                error = $"Theme View '{name}' must reference labels and icons inside its own hierarchy.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate() => ValidationQueue.Request(this);
+#endif
 
         internal bool CanReplaceWith(ThemeView prefab)
         {

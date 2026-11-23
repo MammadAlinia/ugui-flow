@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd55509db9e24472bb738a1396cdba4f, type: 3}
   m_Name: Secondary Button
   m_EditorClassIdentifier: 
+  kind: 6

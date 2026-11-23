@@ -4,9 +4,8 @@ using UnityEngine.UI;
 
 namespace UguiFlow.Samples
 {
-    public sealed class ThemePreview : MonoBehaviour
+    public sealed class ThemePreview : UIComponent
     {
-        [SerializeField] private ThemeScope scope;
         [SerializeField] private ThemeDatabase light;
         [SerializeField] private ThemeDatabase dark;
         [SerializeField] private ThemeDatabase customButton;
@@ -15,6 +14,10 @@ namespace UguiFlow.Samples
         [SerializeField] private ThemeViewKey downloadStatusKey;
         [SerializeField] private ThemeViewKey downloadProgressKey;
 
+        private ThemeScope scope;
+
+        protected override void OnInitialize() => scope = GetComponentInParent<ThemeScope>(true);
+
         public void ShowLight() => Apply(light);
         public void ShowDark() => Apply(dark);
         public void ShowCustomButton() => Apply(customButton);
@@ -22,7 +25,7 @@ namespace UguiFlow.Samples
 
         public void ResetSettings()
         {
-            scope.GetComponentInChildren<Toggle>().isOn = true;
+            GetComponentInChildren<Toggle>().isOn = true;
             FindView(volumeKey).GetComponent<Slider>().value = .65f;
         }
 
@@ -38,7 +41,7 @@ namespace UguiFlow.Samples
         }
 
         private ThemeView FindView(ThemeViewKey key) =>
-            scope.GetComponentsInChildren<ThemeView>().First(view => view.Key == key);
+            GetComponentsInChildren<ThemeView>().First(view => view.Key == key);
 
         private void Apply(ThemeDatabase theme)
         {

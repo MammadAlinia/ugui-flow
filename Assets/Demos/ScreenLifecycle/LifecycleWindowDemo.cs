@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UguiFlow.Samples
 {
-    public sealed class LifecycleWindowDemo : ScreenComponent
+    public sealed class LifecycleWindowDemo : UIComponent
     {
         [SerializeField] private string title;
         [SerializeField] private RectTransform cards;
@@ -11,23 +11,17 @@ namespace UguiFlow.Samples
         private LifecycleDemo demo;
         private int nextCardNumber = 1;
 
-        public string Title => title;
-
-        protected override void OnOpen()
+        protected override void OnInitialize()
         {
-            demo = Window.Screen.GetComponent<LifecycleDemo>();
-            demo?.Record(title, "Open");
+            demo = GetComponentInParent<LifecycleDemo>(true);
+            demo?.Record(title, "Initialize");
             CreateCard();
         }
 
-        protected override void OnShow()
-        {
-            demo?.Record(title, "Show");
-            demo?.RefreshStatus();
-        }
+        protected override void OnShow() => demo?.Record(title, "Show");
 
         protected override void OnHide() => demo?.Record(title, "Hide");
-        protected override void OnClose() => demo?.Record(title, "Close");
+        protected override void OnDispose() => demo?.Record(title, "Destroy");
 
         public void AddCard()
         {
@@ -42,8 +36,15 @@ namespace UguiFlow.Samples
 
         public void RemoveCard()
         {
-            if (cards.childCount > 0)
-                Discard(cards.GetChild(cards.childCount - 1));
+            for (int i = cards.childCount - 1; i >= 0; i--)
+            {
+                Transform child = cards.GetChild(i);
+                if (!child.TryGetComponent<ThemeView>(out _))
+                    continue;
+
+                Discard(child);
+                return;
+            }
         }
 
         private ThemeView CreateCard()
@@ -52,7 +53,7 @@ namespace UguiFlow.Samples
             ThemeView card = Instantiate(cardPrefab, cards, false);
             card.name = $"Note {number}";
             card.ContentLabel.text = card.name;
-            card.SupportingLabel.text = number == 1 ? "Created when this window opened." : "Added by the child controller.";
+            card.SupportingLabel.text = number == 1 ? "Created when this page initialized." : "Added by the child controller.";
             return card;
         }
 

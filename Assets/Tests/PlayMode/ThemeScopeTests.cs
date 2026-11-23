@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,14 +17,20 @@ namespace UguiFlow.Tests
         private const string PreviewScene = "Assets/Demos/Themes/ThemePreview.unity";
         private Scene scene;
         private ThemeScope scope;
+        private UIComponent screen;
 
         [UnitySetUp]
         public IEnumerator OpenPreview()
         {
             scene = EditorSceneManager.LoadSceneInPlayMode(PreviewScene, new LoadSceneParameters(LoadSceneMode.Additive));
             yield return null;
-            scope = scene.GetRootGameObjects().Select(root => root.GetComponent<ThemeScope>()).First(x => x != null);
             yield return null;
+            Window window = scene.GetRootGameObjects().Select(root => root.GetComponent<Window>()).Single(x => x != null);
+            scope = window.GetComponent<ThemeScope>();
+            screen = window.CurrentScreen;
+            Assert.That(screen, Is.Not.Null);
+            Assert.That(screen.IsVisible, Is.True);
+            Assert.That(screen.GetComponentsInChildren<Canvas>(true), Is.Empty);
             Assert.That(scope.CurrentTheme.name, Is.EqualTo("Light"));
         }
 
@@ -118,7 +125,7 @@ namespace UguiFlow.Tests
         [TestCase(720)]
         public void FontOnlySwitchKeepsLayoutHeightAndControlPositions(int width)
         {
-            var frame = (RectTransform)scope.transform.Find("Frame");
+            var frame = (RectTransform)screen.transform.Find("Frame");
             frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
             var page = (RectTransform)frame.Find("Page");
             Canvas.ForceUpdateCanvases();
@@ -149,13 +156,39 @@ namespace UguiFlow.Tests
             try
             {
                 Assert.That(scope.TrySetTheme(empty, out string error), Is.False);
-                Assert.That(error, Does.Contain("compatible prefab"));
+                Assert.That(error, Does.Contain("Panel slot"));
                 Assert.That(scope.CurrentTheme, Is.SameAs(initial));
                 Assert.That(View("Music"), Is.SameAs(music));
             }
             finally
             {
                 Object.DestroyImmediate(empty);
+            }
+        }
+
+        [Test]
+        public void DatabaseRejectsPrefabAssignedToTheWrongInspectorField()
+        {
+            ThemeDatabase initial = scope.CurrentTheme;
+            ThemeView reset = View("Reset settings");
+            Assert.That(initial.TryGetPrefab(reset, out ThemeView resetPrefab), Is.True);
+
+            var misconfigured = Object.Instantiate(initial);
+            try
+            {
+                using var properties = new SerializedObject(misconfigured);
+                properties.FindProperty("buttonPrefab").objectReferenceValue = resetPrefab;
+                properties.ApplyModifiedPropertiesWithoutUndo();
+
+                Assert.That(misconfigured.TryGetPrefab(View("Light"), out _), Is.False);
+                Assert.That(scope.TrySetTheme(misconfigured, out string error), Is.False);
+                Assert.That(error, Does.Contain("Button slot"));
+                Assert.That(scope.CurrentTheme, Is.SameAs(initial));
+                Assert.That(View("Reset settings"), Is.SameAs(reset));
+            }
+            finally
+            {
+                Object.DestroyImmediate(misconfigured);
             }
         }
 
@@ -219,7 +252,7 @@ namespace UguiFlow.Tests
         {
             var host = new GameObject("Scroll position probe", typeof(RectTransform), typeof(ScrollRect));
             var viewport = (RectTransform)host.transform;
-            viewport.SetParent(scope.transform, false);
+            viewport.SetParent(screen.transform, false);
             viewport.sizeDelta = new Vector2(180, 100);
             var content = (RectTransform)new GameObject("Content", typeof(RectTransform)).transform;
             content.SetParent(viewport, false);
@@ -232,7 +265,7 @@ namespace UguiFlow.Tests
             return scroll;
         }
 
-        private ThemeView View(string name) => scope.GetComponentsInChildren<ThemeView>().First(view => view.name == name);
+        private ThemeView View(string name) => screen.GetComponentsInChildren<ThemeView>().First(view => view.name == name);
 
         private void Click(string name) => View(name).GetComponent<Button>().onClick.Invoke();
     }

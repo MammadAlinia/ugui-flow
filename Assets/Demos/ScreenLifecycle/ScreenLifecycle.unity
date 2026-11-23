@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 230412953}
   - component: {fileID: 230412954}
   m_Layer: 0
-  m_Name: Window host
+  m_Name: Screen host
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 230
+  m_MinHeight: 284
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -2441,7 +2441,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4020352106186228334, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Replace
+      value: ResetScreen
       objectReference: {fileID: 0}
     - target: {fileID: 4020352106186228334, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -2449,11 +2449,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5980751809164894366, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
       propertyPath: m_Name
-      value: Replace
+      value: Reset
       objectReference: {fileID: 0}
     - target: {fileID: 8897571360739074187, guid: b604b7dde2905fe4395c6f99595793ba, type: 3}
       propertyPath: m_text
-      value: Replace
+      value: Reset
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2657,8 +2657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937cd0f6d9f34d4dac321c938f63bb6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstWindow: {fileID: 2072147194191307857, guid: 81ea6f62b5c7c7340a1a1515e09aa881, type: 3}
-  secondWindow: {fileID: 3319172965844133636, guid: c163e5f7c0dee9542872ca973a58cf62, type: 3}
+  notesScreen: {fileID: 7775202050100394253, guid: 7d6dd686aaf60e64fb535cd41c301c34, type: 3}
   lightTheme: {fileID: 11400000, guid: 8a1f2f31aceb53f46bee0e79a8f15161, type: 2}
   darkTheme: {fileID: 11400000, guid: dd9739be56e729146ba91ceb1acbf05a, type: 2}
   status: {fileID: 570665090}
@@ -2672,11 +2671,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2113773964}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32f882032d04874a677ed7cb669437b, type: 3}
+  m_Script: {fileID: 11500000, guid: c5eceb9876464dfcb68782e71357ee7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  windowHost: {fileID: 230412953}
-  startupWindow: {fileID: 2072147194191307857, guid: 81ea6f62b5c7c7340a1a1515e09aa881, type: 3}
+  screenHost: {fileID: 230412953}
+  startupScreen: {fileID: 7775202050100394253, guid: 7d6dd686aaf60e64fb535cd41c301c34, type: 3}
 --- !u!114 &2113773967
 MonoBehaviour:
   m_ObjectHideFlags: 0
