@@ -1,0 +1,6 @@
+{
+  "name": "UguiFlow.Editor",
+  "rootNamespace": "UguiFlow.Editor",
+  "references": ["UguiFlow.Runtime", "UnityEngine.UI"],
+  "includePlatforms": ["Editor"]
+}
