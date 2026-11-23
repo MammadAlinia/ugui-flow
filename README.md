@@ -32,7 +32,7 @@ Open `Assets/Demos/Themes/ThemePreview.unity` in Play Mode. Change Music or Volu
 
 The package includes Light and Dark theme databases under `Runtime/Theming/Defaults`. In a Unity project that has yet to use TMP, import **Window > TextMeshPro > Import TMP Essential Resources** for the default Liberation Sans font and shaders. Add a `ThemeScope` to a Canvas or layout root and assign a database under **Initial Theme**. Put the themed control prefabs directly under layout groups.
 
-To customize a theme, duplicate its database. Change **Default Font** for a font-only theme, or drag a prefab variant into the **Prefabs** list in place of the existing view. The variant inherits its `ThemeViewKey` from the base prefab. Create a separate key under **Create > uGUI Flow > Theme View Key** when two controls of the same type need independent styling. Place a decorative themed panel alongside its layout content so each `ThemeView` owns only its visual and control hierarchy.
+To customize a theme, duplicate its database. Change **Default Font** for a font-only theme, or assign a prefab variant to its named Inspector field, such as **Reset Button Prefab**. The variant inherits its `ThemeViewKey` from the base prefab. Each field accepts a prefab whose key uses that field's **Kind**. Assign the fields your themed views use. If you created a database with the earlier **Prefabs** list, assign its references to the named fields and set **Kind** on any custom keys. Place a decorative themed panel alongside its layout content so each `ThemeView` owns only its visual and control hierarchy.
 
 Call `ThemeScope.TrySetTheme(theme, out error)` in Play Mode. The scope preserves supported uGUI control values, label content, and external event listeners. Subscribe to `ViewReplaced` if a controller caches component references. Run `ThemeScopeTests` in Play Mode to check the sample's switch behavior.
 
@@ -44,14 +44,32 @@ The Downloads section also shows a Card, an Icon Button, and Primary, Secondary,
 
 Open `Assets/Demos/Shop/ShopPreview.unity` in Play Mode to browse 30 supply cards. Use the mouse wheel, drag the list, or move the scrollbar. The grid uses three columns at the wide size and one at the narrow size. Switch between **Light** and **Dark** while scrolled to see the cards change theme in place.
 
-Edit the catalog in the scene's **Shop Preview** component. The demo creates each Card prefab directly under the `ScrollRect` content Grid in catalog order.
+Edit the catalog in the **Shop Preview** component on `Assets/Demos/Shop/ShopPreviewScreen.prefab`. The demo creates each Card prefab directly under the `ScrollRect` content Grid in catalog order.
 
 ## Screen lifecycle demo
 
-Open `Assets/Demos/ScreenLifecycle/ScreenLifecycle.unity` in Play Mode. Enable **Keep notes** and add a card, then use **Hide** and **Show** to bring back the same window with both changes. Switch to **Dark** while the window is hidden to see it adopt the current theme on Show. **Replace** opens the Review notes window. **Close** followed by **Open** starts Field notes with its original toggle value and one card. The callback log displays the four most recent callbacks.
+Open `Assets/Demos/ScreenLifecycle/ScreenLifecycle.unity` in Play Mode. Enable **Keep notes** on **Field notes**, add cards, and switch to **Review notes**. Change the theme and return to **Field notes** to see the same toggle value, cards, and scroll position. **Hide** and **Show** preserve the selected tab. **Reset** and **Close** followed by **Open** start a fresh screen. The lifecycle log shows when the pages initialize, show, hide, and are destroyed.
 
-Add **Flow Screen** to a Canvas, assign an active child RectTransform as its **Window Host**, and optionally assign a **Startup Window** prefab. Put **Window** on the root of an editable UI prefab. Derive child controllers from `ScreenComponent` and use their serialized layout references to add and remove direct children. Put the controllers on stable GameObjects inside the window so themed visuals can be replaced independently.
+Click **Test error** on either tab to replace that page with **View unavailable**. You can still switch tabs and change the theme. Click **Reset** to restore both pages.
 
-`OnOpen` runs while the instance is inactive and can initialize views from serialized references. `OnShow` runs after activation, `OnHide` before deactivation, and `OnClose` during close or replacement. Use `ThemeScope.TryApplyCurrentTheme` on a newly added visual subtree when a controller adds views after the window opens. Controllers that cache a replaceable visual can follow `ThemeScope.ViewReplaced`.
+Click **Test task error** beside the sample task to replace just that row. **Add card** and **Remove card** still work on the notes below it.
 
-From code, call `screen.TryOpen(prefab, out var window, out var error)`, `screen.TryHide()`, `screen.TryShow()`, and `screen.TryClose()`. Use `screen.CurrentWindow` to access the mounted window even while hidden.
+Add **Window** to a Canvas, assign a **Screen Host** RectTransform on or below the Canvas, and optionally assign a **Startup Screen** prefab. Put **UI Component** or a subclass on the prefab root. Add more components where layouts, pages, or controls need their own lifecycle. The Inspector displays their parents and children based on the hierarchy, including through ordinary layout wrappers.
+
+Each demo mounts its UI from a screen prefab. Edit the prefab to change the layout and use the scene Canvas to configure the Window and input.
+
+Override `OnInitialize`, `OnShow`, `OnHide`, and `OnDispose`, or subscribe to the corresponding C# events `Initialized`, `Shown`, `Hidden`, and `Destroyed`. Initialization runs before the screen activates. Initialize and show run parent first. Hide and dispose run child first. Keep mounted component GameObjects active and enabled, and call `SetVisible(bool)` to change local visibility. Hidden components retain state and active scripts, and the CanvasGroup disables their input. Keep stateful components above replaceable `ThemeView` visuals. Use `ThemeScope.TryApplyCurrentTheme` when adding a new visual subtree.
+
+Every mounted screen has its own `ScreenEvents`. Call `Events.Publish(message)` or `Events.Subscribe<T>(this, handler)` from components in that tree. Dispose each subscription when its listening period ends.
+
+Call `ShowError()` when a component cannot display its content. Lifecycle and screen-event callbacks that fail use the same recovery path. The component and its children are deactivated, and the theme's **Error View Prefab** takes their place. Every theme database requires this slot. Screens without a `ThemeScope` use the bundled Light error view.
+
+From code, call `window.TryOpen(prefab, out var screen, out var error)`, `window.TryHide()`, `window.TryShow()`, and `window.TryClose()`. Use `window.CurrentScreen` to access the mounted root while it is visible or hidden.
+
+## Tabs and page navigation
+
+1. Add **Page Navigator** to the page container inside a screen prefab. Add each page as a **UI Component** child of the navigator and assign it in **Pages**. The first entry is the initial page.
+2. Drag **Navigation Bar** from `Packages/com.mammadalinia.ugui-flow/Runtime/Navigation/Prefabs` into the same screen. Assign its **Navigator**, then assign each tab's **Page**. Edit the text on the tab's child button. Add more **Tab** instances under **Tabs** to add destinations.
+3. For a custom layout, add **Navigation Bar** and place **Navigation Tab** components beneath it. Assign a child **Button** and a destination **Page** on each tab. You can assign a non-raycastable underline to the bar's **Indicator**. Its horizontal anchors follow the selected tab.
+
+Use `navigator.TrySelectPage(page)` with a page instance from the mounted screen and read `navigator.SelectedPage` for the current destination. A selection keeps the other pages mounted so they retain their state. Subscribe to `PageChanged` through `ScreenEvents` to receive the navigator and the previous and current pages.
