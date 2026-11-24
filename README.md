@@ -2,9 +2,17 @@
 
 uGUI Flow is a Unity UI package for responsive layouts, prefab-based themes, screen navigation, and reactive data binding.
 
+## Install with Unity Package Manager
+
+In Unity 6.0 or later with Git on your `PATH`, open **Window > Package Management > Package Manager > + > Install package from git URL**, paste the URL below, and click **Install**.
+
+```text
+https://github.com/MammadAlinia/ugui-flow.git?path=/Packages/com.mammadalinia.ugui-flow
+```
+
 ## Development
 
-Open this repository as a project in Unity **6000.0.85f1**. The embedded package is `Packages/com.mammadalinia.ugui-flow` and uses `com.unity.ugui` 2.0.0.
+To run the demo scenes and tests below, open this repository as a project in Unity **6000.0.85f1**. The embedded package is `Packages/com.mammadalinia.ugui-flow`.
 
 For the setup milestone, confirm that **uGUI Flow** appears under **In Project** in Package Manager, then run `PackageSmokeTests` from **Window > General > Test Runner > EditMode**. With the project closed, you can also run the tests from the repository root with the Unity CLI.
 
