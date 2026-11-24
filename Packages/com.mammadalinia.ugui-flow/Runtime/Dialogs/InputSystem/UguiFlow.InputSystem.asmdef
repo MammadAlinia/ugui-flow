@@ -1,0 +1,13 @@
+{
+  "name": "UguiFlow.InputSystem",
+  "rootNamespace": "UguiFlow",
+  "references": ["UguiFlow.Runtime", "Unity.InputSystem", "UnityEngine.UI"],
+  "defineConstraints": ["UGUI_FLOW_INPUT_SYSTEM", "ENABLE_INPUT_SYSTEM"],
+  "versionDefines": [
+    {
+      "name": "com.unity.inputsystem",
+      "expression": "1.0.0",
+      "define": "UGUI_FLOW_INPUT_SYSTEM"
+    }
+  ]
+}

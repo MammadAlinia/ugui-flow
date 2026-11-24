@@ -9,6 +9,7 @@ namespace UguiFlow.Samples
         [SerializeField] private UIComponent notesScreen;
         [SerializeField] private ThemeDatabase lightTheme;
         [SerializeField] private ThemeDatabase darkTheme;
+        [SerializeField] private ThemeScope dialogThemeScope;
         [SerializeField] private ThemeView status;
         [SerializeField] private ThemeView callbackLog;
 
@@ -54,6 +55,19 @@ namespace UguiFlow.Samples
         public void ShowLight() => SetTheme(lightTheme);
         public void ShowDark() => SetTheme(darkTheme);
 
+        public void ShowInfoDialog()
+        {
+            Dialog.Info("Notes are ready", "Your notes will stay open after you close this dialog.",
+                () => Record("Info dialog", "OK"));
+        }
+
+        public void ShowErrorDialog()
+        {
+            Dialog.Error("Could not sync notes", "Choose Retry to simulate another attempt, or Cancel to return to your notes.",
+                ("Retry", () => Record("Error dialog", "Retry")),
+                ("Cancel", () => Record("Error dialog", "Cancel")));
+        }
+
         internal void Record(string title, string callback)
         {
             if (callbackLog == null)
@@ -84,7 +98,8 @@ namespace UguiFlow.Samples
 
         private void SetTheme(ThemeDatabase theme)
         {
-            if (!scope.TrySetTheme(theme, out string error))
+            if (!scope.TrySetTheme(theme, out string error) ||
+                (dialogThemeScope != null && !dialogThemeScope.TrySetTheme(theme, out error)))
                 Debug.LogError(error, this);
         }
 

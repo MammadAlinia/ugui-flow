@@ -54,6 +54,8 @@ Click **Test error** on either tab to replace that page with **View unavailable*
 
 Click **Test task error** beside the sample task to replace just that row. **Add card** and **Remove card** still work on the notes below it.
 
+Click **Info dialog** or **Error dialog** above the notes to open an overlay in the current theme. Choose **OK**, **Retry**, or **Cancel** to record the action in the lifecycle log.
+
 Add **Window** to a Canvas, assign a **Screen Host** RectTransform on or below the Canvas, and optionally assign a **Startup Screen** prefab. Put **UI Component** or a subclass on the prefab root. Add more components where layouts, pages, or controls need their own lifecycle. The Inspector displays their parents and children based on the hierarchy, including through ordinary layout wrappers.
 
 Each demo mounts its UI from a screen prefab. Edit the prefab to change the layout and use the scene Canvas to configure the Window and input.
@@ -65,6 +67,29 @@ Every mounted screen has its own `ScreenEvents`. Call `Events.Publish(message)` 
 Call `ShowError()` when a component cannot display its content. Lifecycle and screen-event callbacks that fail use the same recovery path. The component and its children are deactivated, and the theme's **Error View Prefab** takes their place. Every theme database requires this slot. Screens without a `ThemeScope` use the bundled Light error view.
 
 From code, call `window.TryOpen(prefab, out var screen, out var error)`, `window.TryHide()`, `window.TryShow()`, and `window.TryClose()`. Use `window.CurrentScreen` to access the mounted root while it is visible or hidden.
+
+## Modal dialogs
+
+Call `Dialog.Info` or `Dialog.Error` from the Unity main thread in Play Mode. Each preset supplies its own header icon. Pass a title, a description, and one or more button actions. An empty or null description leaves out the description area.
+
+```csharp
+using UguiFlow;
+using UnityEngine;
+
+Dialog.Info("Settings saved", "Your changes are ready.",
+    (Icons.Accept, () => Debug.Log("Accepted")),
+    (Icons.Cancel, () => Debug.Log("Cancelled")));
+
+Dialog.Error("Download failed", "Check your connection and try again.",
+    ("Retry", RetryDownload),
+    ("Cancel", CancelDownload));
+
+Dialog.Error("Connection lost", "", () => Debug.Log("Acknowledged"));
+```
+
+Icon tuples display a sprite. Label tuples display the text you supply. A single callback displays **OK**. The overlay blocks background UI input while keeping the current screen visible. Use Up and Down to move between actions or scroll the panel when its content exceeds the available height. The dialog closes before the selected callback runs, and queued dialogs open in request order. Unloading the host's scene discards any outstanding dialogs.
+
+The first call creates a dialog overlay in the active scene when needed. To customize it, add one active **Dialog Host** to a dedicated root Canvas in that scene. Create prefab variants from **Info** and **Error** under `Runtime/Dialogs/Resources/UguiFlow/Dialogs`, then assign your variants to **Info Prefab** and **Error Prefab**. Edit the header icon, spacing, and action sprite and button prefab fields on the variants. Add a **Theme Scope** to the same Canvas and assign an **Initial Theme** to apply its panel, label, and button styles while the dialog is open.
 
 ## Tabs and page navigation
 

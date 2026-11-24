@@ -181,6 +181,48 @@ namespace UguiFlow.Tests
         }
 
         [UnityTest]
+        public IEnumerator DemoDialogsUseTheSelectedThemeAndRecordEachChoice()
+        {
+            Scene previousScene = SceneManager.GetActiveScene();
+            SceneManager.SetActiveScene(scene);
+            try
+            {
+                UIComponent screen = window.CurrentScreen;
+                PageNavigator navigator = screen.GetComponentInChildren<PageNavigator>();
+                Click(ButtonNamed(window, "Dark"));
+                Click(ButtonNamed(screen, "Review notes tab"));
+                UIComponent selected = navigator.SelectedPage;
+                var host = scene.GetRootGameObjects().Select(root => root.GetComponent<DialogHost>())
+                    .Single(component => component != null);
+                Assert.That(host.GetComponent<ThemeScope>().CurrentTheme,
+                    Is.SameAs(window.GetComponent<ThemeScope>().CurrentTheme));
+
+                foreach (var (trigger, action) in new[] { ("Info dialog", "OK"), ("Error dialog", "Retry"), ("Error dialog", "Cancel") })
+                {
+                    Click(ButtonNamed(window, trigger));
+                    yield return null;
+                    DialogScreen dialog = host.GetComponentInChildren<DialogScreen>();
+                    Assert.That(dialog, Is.Not.Null);
+                    Assert.That(window.CurrentScreen, Is.SameAs(screen));
+                    Assert.That(screen.IsVisible && selected.IsVisible, Is.True);
+                    Assert.That(navigator.SelectedPage, Is.SameAs(selected));
+
+                    Button button = dialog.GetComponentsInChildren<Button>()
+                        .Single(candidate => candidate.GetComponent<ThemeView>().ContentLabel.text == action);
+                    Click(button);
+                    Assert.That(host.GetComponentInChildren<DialogScreen>(), Is.Null);
+                    ThemeView callbackLog = window.GetComponentsInChildren<ThemeView>()
+                        .Single(view => view.name == "Callback log");
+                    Assert.That(callbackLog.ContentLabel.text, Does.Contain($"{action}   /   {trigger}"));
+                }
+            }
+            finally
+            {
+                SceneManager.SetActiveScene(previousScene);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator TestErrorReplacesEitherPageAndResetRestoresTheScreen()
         {
             UIComponent screen = window.CurrentScreen;
